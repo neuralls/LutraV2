@@ -19,7 +19,20 @@ When Lutra was initially created, it became clear that there were significant ga
 local owner, branch = "neuralls", "main"
 
 function Import(file: string, args)
-    return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/LutraV2/%s/%s.lua"):format(owner, branch, file)), "Framework")(args or {})
+    local folder, filename = "", ""
+
+    if file:find("/") then
+        folder, filename = file:match("([^/]+)/(.+)")
+    end
+
+    local url
+    if folder ~= "" then
+        url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s/%s.lua"):format(owner, branch, folder, filename)
+    else
+        url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s.lua"):format(owner, branch, filename)
+    end
+
+    return loadstring(game:HttpGetAsync(url), filename)(args or {})
 end
 ```
 <small>repo heavily inspired by [hydroxide](https://github.com/Upbolt/Hydroxide) </small>
