@@ -14,7 +14,7 @@ local Framework = {
     SharedData  = {},
     Connections = {},
     Instances   = {},
-    Services = setmetatable({}, {
+    Services    = setmetatable({}, {
         __index = function(self, service)
             local serviceInstance = game:GetService(service)
             rawset(self, service, serviceInstance)

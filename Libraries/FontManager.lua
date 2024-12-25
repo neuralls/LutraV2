@@ -5,6 +5,10 @@
 local Framework = ({...})[1] or nil
 if typeof(Framework) ~= "table" then print("framework not added") end
 
+if Framework.FontManager then
+    error("FontManager already loaded")
+end
+
 local FontManager = { Fonts = {} }
 
 Framework.Modules.FontManager = FontManager
