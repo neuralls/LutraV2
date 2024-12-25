@@ -100,7 +100,6 @@ do -- Instance Manager
     InstanceManager.unload = function()
         for _, instance in pairs(Framework.Instances) do
             instance:Destroy()
-            print(instance)
         end
     end
 
