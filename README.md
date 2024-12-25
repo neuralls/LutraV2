@@ -32,7 +32,7 @@ function Import(file: string, args)
         url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s.lua"):format(owner, branch, filename)
     end
 
-    return loadstring(game:HttpGetAsync(url), filename)(args or {})
+    return loadstring(game:HttpGetAsync(url), filename)(args or false)
 end
 ```
 <small>repo heavily inspired by [hydroxide](https://github.com/Upbolt/Hydroxide) </small>
