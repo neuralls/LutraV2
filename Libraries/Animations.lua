@@ -21,7 +21,7 @@ local Animations = {
     Info = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), -- default setting
 }
 
-Animations.tween = function(object, goal, callback)
+Animations.Tween = function(object, goal, callback)
     local tween = services["TweenService"]:Create(object, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), goal)
     signals.connect(tween.Completed, callback or function() end)
     tween:Play()
