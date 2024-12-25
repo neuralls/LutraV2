@@ -1,16 +1,16 @@
---[[ DesignTools.lua
-    Adds shortcuts to make ui design techniques shorter, optimized, and easily managable.
+--[[ Utilities.lua
+    Adds shortcuts to make code shorter, more optimized, and less redundant.
 ]]
 
 local Framework = ({...})[1] or nil
 if typeof(Framework) ~= "table" then print("framework not added") end
 
-if Framework.Modules.DesignTools then
-    error("DesignTools already loaded")
+if Framework.Modules.Utilities then
+    error("Utilities already loaded")
 end
 
-local DesignTools = {}
-Framework.Modules.DesignTools = DesignTools
+local Utilities = {}
+Framework.Modules.Utilities = Utilities
 
 -- Grab dependencies
 local services  = Framework.Services
@@ -19,7 +19,7 @@ local instances = Framework.Modules.InstanceManager
 
 -- code
 
-DesignTools.Stroke    = function(params: table)
+Utilities.Stroke    = function(params: table)
     local props = {
         Object      = params.Object or nil,
         Inner       = params.Inner or false,
@@ -59,7 +59,7 @@ DesignTools.Stroke    = function(params: table)
     end
     return Stroke
 end
-DesignTools.Draggable = function(object: GuiObject, ignored: GuiObject)
+Utilities.Draggable = function(object: GuiObject, ignored: GuiObject)
     local hover = false
     if ignored then
         signals.connect(ignored.MouseEnter, function()
@@ -97,7 +97,7 @@ DesignTools.Draggable = function(object: GuiObject, ignored: GuiObject)
         end
     end)
 end
-DesignTools.Resizable = function(object: GuiObject, button: GuiObject)
+Utilities.Resizable = function(object: GuiObject, button: GuiObject)
     local dragging, currentsize
     local presetsize = object.Size
     signals.connect(button.MouseButton1Down, function(input)
@@ -118,9 +118,9 @@ DesignTools.Resizable = function(object: GuiObject, button: GuiObject)
         end
     end)
 end
-DesignTools.unload = function()
-    Framework.Modules.DesignTools = nil
-    DesignTools = nil
+Utilities.unload = function()
+    Framework.Modules.Utilities = nil
+    Utilities = nil
 end
 
-return DesignTools
+return Utilities
