@@ -118,5 +118,9 @@ DesignTools.Resizable = function(object: GuiObject, button: GuiObject)
         end
     end)
 end
+DesignTools.unload = function()
+    Framework.Modules.DesignTools = nil
+    DesignTools = nil
+end
 
 return DesignTools
