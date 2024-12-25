@@ -1,29 +1,33 @@
+--[[ FontManager.lua
+    Adds functionality to load fonts from base64 data.
+]]
+
 local Framework = ({...})[1] or nil
 if typeof(Framework) ~= "function" then print("framework not added") end
 
---[[
-local HttpService = cloneref(game:GetService("HttpService"));
+local FontManager = { Fonts = {} }
+
+Framework.Modules.FontManager = FontManager
+local services = Framework.Services
 
 if not isfolder("DrawingFontCache") then
     makefolder("DrawingFontCache")
 end
 
-local fontmanager = { Fonts = {} }
-
-function fontmanager.create(FontName, FontSource)
+FontManager.create = function(FontName, FontSource)
     if string.match(FontSource,"https") then
         FontSource = request({Url = FontSource .. FontName}).Body
     end
 
     local FontObject
 
-    local TempPath = HttpService:GenerateGUID(false)
+    local TempPath = services["HttpService"]:GenerateGUID(false)
     if not isfile(FontSource) then
         writefile(`DrawingFontCache/{FontName}.ttf`, crypt.base64.decode(FontSource))
         FontSource = `DrawingFontCache/{FontName}.ttf`
     end
 
-    writefile(TempPath, HttpService:JSONEncode({
+    writefile(TempPath, services["HttpService"]:JSONEncode({
         ["name"] = FontName,
         ["faces"] = {
             {
@@ -36,17 +40,15 @@ function fontmanager.create(FontName, FontSource)
     }))
 
     FontObject = Font.new(getcustomasset(TempPath), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-    fontmanager.Fonts[FontName] = FontObject
+    FontManager.Fonts[FontName] = FontObject
     delfile(TempPath)
 
     return FontObject
 end
 
-function fontmanager.list()
-    for name,font in pairs(fontmanager.Fonts) do
-        print(name, "=", font.Object)
-    end
+FontManager.unload = function()
+    FontManager = nil
+    Framework.Modules.FontManager = nil
 end
 
-return fontmanager
-]]
+return FontManager
