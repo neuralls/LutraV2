@@ -21,8 +21,8 @@ local Framework = {
 
 function Framework.unload()
     for _, module in pairs(Framework.Modules) do
-        if module.Unload then
-            module.Unload()
+        if module.unload then
+            module.unload()
         end
     end
 end
