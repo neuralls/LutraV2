@@ -3,7 +3,7 @@
 ]]
 
 local Framework = ({...})[1] or nil
-if typeof(Framework) ~= "table" then print("framework not added") end
+if typeof(Framework) ~= "table" then error("framework not added") end
 
 if Framework.Modules.Utilities then
     error("Utilities already loaded")
