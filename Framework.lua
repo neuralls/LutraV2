@@ -2,9 +2,47 @@
   Main base of the repository.
 ]]
 
-local filename = "Framework"
+local moduleName = "Framework"
 
 local Import = ({...})[1] or nil
 if typeof(Import) ~= "function" then
-  error("Import not provided to "..filename)
+    error("Dependency loader not provided to " .. moduleName)
 end
+
+local Framework = {
+    Modules = {
+        --[[
+            Name = Table
+        ]]
+    },
+    SharedData = {},
+    Connections = {}
+}
+Framework.__Index = Framework.SharedData
+
+function Framework.unload()
+    for _, module in pairs(Framework.Modules) do
+        if module.Unload then
+            module.Unload()
+        end
+    end
+end
+
+do -- Signal Handling
+    local SignalHandler = {}
+
+    SignalHandler.connectSignal = function(signal: RBXScriptSignal, callback)
+        local connection = signal:Connect(callback)
+        table.insert(Framework.Connections, connection)
+        return connection
+    end
+    SignalHandler.disconnectAllSignals = function()
+        for _, connection in ipairs(Framework.Connections) do
+            connection:Disconnect()
+        end
+    end
+
+    Framework.Modules.SignalHandler = SignalHandler
+end
+
+return Framework
