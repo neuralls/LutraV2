@@ -2,11 +2,11 @@
   Main base of the repository.
 ]]
 
-local moduleName = "Framework"
+local fileName = "Framework"
 
 local Import = ({...})[1] or nil
 if typeof(Import) ~= "function" then
-    error("Import function not provided to " .. moduleName)
+    error("Import function not provided to " .. fileName)
 end
 
 local Framework = {
@@ -106,3 +106,5 @@ do -- Instance Manager
 
     Framework.Modules.InstanceManager = InstanceManager
 end
+
+return Framework
