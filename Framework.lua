@@ -18,7 +18,6 @@ local Framework = {
     SharedData = {},
     Connections = {}
 }
-Framework.__Index = Framework.Modules
 
 function Framework.unload()
     for _, module in pairs(Framework.Modules) do
