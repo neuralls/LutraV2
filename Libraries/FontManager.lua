@@ -1,3 +1,7 @@
+local Framework = ({...})[1] or nil
+if Framework == nil then print("framework not added") end
+
+--[[
 local HttpService = cloneref(game:GetService("HttpService"));
 
 if not isfolder("DrawingFontCache") then
@@ -45,3 +49,4 @@ function fontmanager.list()
 end
 
 return fontmanager
+]]
