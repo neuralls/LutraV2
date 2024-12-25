@@ -5,14 +5,17 @@
 local Framework = ({...})[1] or nil
 if typeof(Framework) ~= "table" then print("framework not added") end
 
-if Framework.FontManager then
+if Framework.Modules.FontManager then
     error("FontManager already loaded")
 end
 
 local FontManager = { Fonts = {} }
-
 Framework.Modules.FontManager = FontManager
+
+-- Grab dependencies
 local services = Framework.Services
+
+-- code
 
 if not isfolder("DrawingFontCache") then
     makefolder("DrawingFontCache")
