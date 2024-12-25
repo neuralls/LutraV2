@@ -1,6 +1,6 @@
 local Framework = ({...})[1] or nil
 if Framework == nil then print("framework not added") end
-
+print("loaded")
 --[[
 local HttpService = cloneref(game:GetService("HttpService"));
 
