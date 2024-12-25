@@ -18,8 +18,8 @@ When Lutra was initially created, it became clear that there were significant ga
 ```lua
 local owner, branch = "neuralls", "main"
 
-function Import(file: string)
-    return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/libraries/%s.lua"):format(owner, branch, file)), file .. '.lua')()
+function Import(file: string, args)
+    return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/LutraV2/%s/%s.lua"):format(owner, branch, file)), "Framework")(args or {})
 end
 ```
 <small>repo heavily inspired by [hydroxide](https://github.com/Upbolt/Hydroxide) </small>
