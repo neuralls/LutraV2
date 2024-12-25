@@ -19,7 +19,7 @@ When Lutra was initially created, it became clear that there were significant ga
 local owner, branch = "neuralls", "main"
 
 function Import(file: string, args)
-    local folder, filename = "", ""
+    local folder, filename = "", file
 
     if file:find("/") then
         folder, filename = file:match("([^/]+)/(.+)")
