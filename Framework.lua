@@ -18,7 +18,7 @@ local Framework = {
     SharedData = {},
     Connections = {}
 }
-Framework.__Index = Framework.SharedData
+Framework.__Index = Framework.Modules
 
 function Framework.unload()
     for _, module in pairs(Framework.Modules) do
@@ -31,12 +31,12 @@ end
 do -- Signal Handling
     local SignalHandler = {}
 
-    SignalHandler.connectSignal = function(signal: RBXScriptSignal, callback)
+    SignalHandler.connect = function(signal: RBXScriptSignal, callback)
         local connection = signal:Connect(callback)
         table.insert(Framework.Connections, connection)
         return connection
     end
-    SignalHandler.disconnectAllSignals = function()
+    SignalHandler.unload = function()
         for _, connection in ipairs(Framework.Connections) do
             connection:Disconnect()
         end
