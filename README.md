@@ -25,9 +25,8 @@ function Import(file: string, args)
         folder, filename = file:match("([^/]+)/(.+)")
     end
 
-    if typeof(args) == "table" and args.Modules[filename] then
-        print("Module already loaded (Framework.Modules.".. filename ..")")
-        return
+    if typeof(args) == "table" and args.Modules[filename] then -- check if module exists, if it does return it
+        return args.Modules[filename]
     end
 
     local url
