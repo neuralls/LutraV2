@@ -9,7 +9,7 @@ if Framework.Modules.Animations then
     error("Animations already loaded")
 end
 
-local Animations = { Fonts = {} }
+local Animations = {}
 Framework.Modules.Animations = Animations
 
 -- Grab dependencies
