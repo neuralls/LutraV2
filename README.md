@@ -25,6 +25,11 @@ function Import(file: string, args)
         folder, filename = file:match("([^/]+)/(.+)")
     end
 
+    if typeof(args) == "table" and args.Modules[filename] then
+        print("Module already loaded (Framework.Modules.".. filename ..")")
+        return
+    end
+
     local url
     if folder ~= "" then
         url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s/%s.lua"):format(owner, branch, folder, filename)
