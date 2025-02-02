@@ -26,8 +26,8 @@ function Import(file: string, ...)
         folder, filename = file:match("([^/]+)/(.+)")
     end
 
-    if typeof(args) == "table" and args[1] and args[1].Modules and args[1].Modules[filename] then
-        -- Check if the module exists in the passed argument table, if it does return it
+    -- Check if module is already loaded
+    if typeof(args[1]) == "table" and args[1].Modules[filename] then
         return args[1].Modules[filename]
     end
 
@@ -38,7 +38,7 @@ function Import(file: string, ...)
         url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s.lua"):format(owner, branch, filename) -- no folder
     end
 
-    return loadstring(game:HttpGetAsync(url), filename)(unpack(args) or false) -- grab script through http, filename for debugging, and passing paramaters to the library
+    return loadstring(game:HttpGetAsync(url), filename)(unpack(args))
 end
 
 ```
