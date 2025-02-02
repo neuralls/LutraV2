@@ -16,27 +16,30 @@ When Lutra was initially created, it became clear that there were significant ga
 
 ## Usage
 ```lua
-local owner, branch = "neuralls", "main"
+local owner, branch = "neuralls", "main" -- change if you forked the repo
 
-function Import(file: string, args)
+function Import(file: string, ...)
+    local args = {...}  -- Capture all arguments as a table
     local folder, filename = "", file
 
-    if file:find("/") then
+    if file:find("/") then -- handle folders
         folder, filename = file:match("([^/]+)/(.+)")
     end
 
-    if typeof(args) == "table" and args.Modules[filename] then -- check if module exists, if it does return it
-        return args.Modules[filename]
+    if typeof(args) == "table" and args[1] and args[1].Modules and args[1].Modules[filename] then
+        -- Check if the module exists in the passed argument table, if it does return it
+        return args[1].Modules[filename]
     end
 
     local url
     if folder ~= "" then
-        url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s/%s.lua"):format(owner, branch, folder, filename)
+        url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s/%s.lua"):format(owner, branch, folder, filename) -- folder
     else
-        url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s.lua"):format(owner, branch, filename)
+        url = ("https://raw.githubusercontent.com/%s/LutraV2/refs/heads/%s/%s.lua"):format(owner, branch, filename) -- no folder
     end
 
-    return loadstring(game:HttpGetAsync(url), filename)(args or false)
+    return loadstring(game:HttpGetAsync(url), filename)(unpack(args) or false) -- grab script through http, filename for debugging, and passing paramaters to the library
 end
+
 ```
 <small>repo heavily inspired by [hydroxide](https://github.com/Upbolt/Hydroxide) </small>
