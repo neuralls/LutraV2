@@ -15,7 +15,7 @@ FontManager.create = function(FontName, FontSource)
     local FontMeta = "DrawingFontCache/" .. FontName .. ".font"
 
     if string.match(FontSource, "^https?://") then
-        local url = FontSource .. FontName .. ".ttf"
+        local url = FontSource .. FontName
         local response = request({ Url = url })
         if response.Success then
             FontSource = response.Body
