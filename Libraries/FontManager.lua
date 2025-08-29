@@ -2,39 +2,29 @@
     Adds functionality to load fonts from base64 data.
 ]]
 
-local Framework = ({...})[1] or nil
-if typeof(Framework) ~= "table" then error("framework not added") end
-
-if Framework.Modules.FontManager then
-    error("FontManager already loaded")
-end
+local HttpService = cloneref(game:GetService("HttpService"))
 
 local FontManager = { Fonts = {} }
-Framework.Modules.FontManager = FontManager
-
--- Grab dependencies
-local services = Framework.Services
-
--- code
 
 if not isfolder("DrawingFontCache") then
     makefolder("DrawingFontCache")
 end
 
 FontManager.create = function(FontName, FontSource)
-    if string.match(FontSource,"https") then
-        FontSource = request({Url = FontSource .. FontName}).Body
+    if string.match(FontSource, "https") then
+        FontSource = request({ Url = FontSource .. FontName }).Body
     end
 
     local FontObject
+    local TempPath = HttpService:GenerateGUID(false)
 
-    local TempPath = services["HttpService"]:GenerateGUID(false)
     if not isfile(FontSource) then
-        writefile("DrawingFontCache/" .. FontName .. ".ttf", crypt.base64.decode(FontSource))
-        FontSource = "DrawingFontCache/" .. FontName .. ".ttf"
+        local FontPath = "DrawingFontCache/" .. FontName .. ".ttf"
+        writefile(FontPath, crypt.base64.decode(FontSource))
+        FontSource = FontPath
     end
 
-    writefile(TempPath, services["HttpService"]:JSONEncode({
+    writefile(TempPath, HttpService:JSONEncode({
         ["name"] = FontName,
         ["faces"] = {
             {
@@ -53,9 +43,14 @@ FontManager.create = function(FontName, FontSource)
     return FontObject
 end
 
+FontManager.list = function()
+    for name, font in pairs(FontManager.Fonts) do
+        print(name, "=", font)
+    end
+end
+
 FontManager.unload = function()
     FontManager = nil
-    Framework.Modules.FontManager = nil
 end
 
 return FontManager
