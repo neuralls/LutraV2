@@ -16,20 +16,21 @@ FontManager.create = function(FontName, FontSource)
 
     if string.match(FontSource, "^https?://") then
         local url = FontSource .. FontName
-        local response = request({ Url = url })
-        if response.Success then
-            FontSource = response.Body
+        local success, response = pcall(function()
+            return game:HttpGet(url)
+        end)
+
+        if success then
+            FontSource = response
         else
-            error("Failed to fetch font from " .. url)
+            error("Failed to fetch font from " .. url .. ": " .. tostring(response))
         end
     end
-
-    -- write .ttf file if it doesn't exist yet
+    
     if not isfile(FontPath) then
-        writefile(FontPath, crypt.base64.decode(FontSource))
+        writefile(FontPath, FontSource) 
     end
 
-    -- rebuild .font metadata
     if isfile(FontMeta) then
         delfile(FontMeta)
     end
@@ -52,8 +53,6 @@ FontManager.create = function(FontName, FontSource)
     FontManager.Fonts[FontName] = FontObject
     return FontObject
 end
-
-
 
 FontManager.list = function()
     for name, font in pairs(FontManager.Fonts) do
