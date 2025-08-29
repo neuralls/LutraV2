@@ -1,44 +1,52 @@
 --[[ FontManager.lua
-    Adds functionality to load fonts from base64 data.
+    Adds functionality to load fonts with .font metadata.
 ]]
 
 local HttpService = cloneref(game:GetService("HttpService"))
-
-local FontManager = { Fonts = {} }
 
 if not isfolder("DrawingFontCache") then
     makefolder("DrawingFontCache")
 end
 
+local FontManager = { Fonts = {} }
+
 FontManager.create = function(FontName, FontSource)
+    -- two variables like Register_Font
+    local FontPath = "DrawingFontCache/" .. FontName .. ".ttf"
+    local FontMeta = "DrawingFontCache/" .. FontName .. ".font"
+
+    -- if source is a URL
     if string.match(FontSource, "https") then
         FontSource = request({ Url = FontSource .. FontName }).Body
     end
 
-    local FontObject
-    local TempPath = HttpService:GenerateGUID(false)
-
-    if not isfile(FontSource) then
-        local FontPath = "DrawingFontCache/" .. FontName .. ".ttf"
+    -- write .ttf if it doesn't exist
+    if not isfile(FontPath) then
         writefile(FontPath, crypt.base64.decode(FontSource))
-        FontSource = FontPath
     end
 
-    writefile(TempPath, HttpService:JSONEncode({
-        ["name"] = FontName,
-        ["faces"] = {
-            {
-                ["name"] = "Regular",
-                ["weight"] = 100,
-                ["style"] = "normal",
-                ["assetId"] = getcustomasset(FontSource)
-            }
-        }
-    }))
+    -- rebuild .font metadata
+    if isfile(FontMeta) then
+        delfile(FontMeta)
+    end
 
-    FontObject = Font.new(getcustomasset(TempPath), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+    local Data = {
+        name = FontName,
+        faces = {
+            {
+                name = "Regular",
+                weight = 100,
+                style = "normal",
+                assetId = getcustomasset(FontPath),
+            },
+        },
+    }
+
+    writefile(FontMeta, HttpService:JSONEncode(Data))
+
+    -- create font object
+    local FontObject = Font.new(getcustomasset(FontMeta), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
     FontManager.Fonts[FontName] = FontObject
-    delfile(TempPath)
 
     return FontObject
 end
