@@ -13,15 +13,23 @@ local FontManager = { Fonts = {} }
 FontManager.create = function(FontName, FontSource)
     local FontPath = "DrawingFontCache/" .. FontName .. ".ttf"
     local FontMeta = "DrawingFontCache/" .. FontName .. ".font"
-    
-    if string.match(FontSource, "^https") then
-        FontSource = game:HttpGet(FontSource)
+
+    if string.match(FontSource, "^https?://") then
+        local url = FontSource .. FontName .. ".ttf"
+        local response = request({ Url = url })
+        if response.Success then
+            FontSource = response.Body
+        else
+            error("Failed to fetch font from " .. url)
+        end
     end
 
+    -- write .ttf file if it doesn't exist yet
     if not isfile(FontPath) then
         writefile(FontPath, crypt.base64.decode(FontSource))
     end
 
+    -- rebuild .font metadata
     if isfile(FontMeta) then
         delfile(FontMeta)
     end
@@ -39,10 +47,12 @@ FontManager.create = function(FontName, FontSource)
     }
 
     writefile(FontMeta, HttpService:JSONEncode(Data))
+
     local FontObject = Font.new(getcustomasset(FontMeta), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
     FontManager.Fonts[FontName] = FontObject
     return FontObject
 end
+
 
 
 FontManager.list = function()
