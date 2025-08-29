@@ -30,8 +30,8 @@ FontManager.create = function(FontName, FontSource)
 
     local TempPath = services["HttpService"]:GenerateGUID(false)
     if not isfile(FontSource) then
-        writefile(`DrawingFontCache/{FontName}.ttf`, crypt.base64.decode(FontSource))
-        FontSource = `DrawingFontCache/{FontName}.ttf`
+        writefile("DrawingFontCache/" .. FontName .. ".ttf", crypt.base64.decode(FontSource))
+        FontSource = "DrawingFontCache/" .. FontName .. ".ttf"
     end
 
     writefile(TempPath, services["HttpService"]:JSONEncode({
