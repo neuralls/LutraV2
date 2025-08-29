@@ -11,21 +11,17 @@ end
 local FontManager = { Fonts = {} }
 
 FontManager.create = function(FontName, FontSource)
-    -- two variables like Register_Font
     local FontPath = "DrawingFontCache/" .. FontName .. ".ttf"
     local FontMeta = "DrawingFontCache/" .. FontName .. ".font"
-
-    -- if source is a URL
-    if string.match(FontSource, "https") then
-        FontSource = request({ Url = FontSource .. FontName }).Body
+    
+    if string.match(FontSource, "^https") then
+        FontSource = game:HttpGet(FontSource)
     end
 
-    -- write .ttf if it doesn't exist
     if not isfile(FontPath) then
         writefile(FontPath, crypt.base64.decode(FontSource))
     end
 
-    -- rebuild .font metadata
     if isfile(FontMeta) then
         delfile(FontMeta)
     end
@@ -43,13 +39,11 @@ FontManager.create = function(FontName, FontSource)
     }
 
     writefile(FontMeta, HttpService:JSONEncode(Data))
-
-    -- create font object
     local FontObject = Font.new(getcustomasset(FontMeta), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
     FontManager.Fonts[FontName] = FontObject
-
     return FontObject
 end
+
 
 FontManager.list = function()
     for name, font in pairs(FontManager.Fonts) do
