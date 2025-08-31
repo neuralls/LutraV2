@@ -1,8 +1,19 @@
 --[[ FontManager.lua
-    Adds functionality to load fonts with .font metadata.
+    Minimal, optimized font loader with caching and unload functionality.
 ]]
 
-local HttpService = cloneref(game:GetService("HttpService"))
+local Framework = ({...})[1] or nil
+if typeof(Framework) ~= "table" then error("framework not added") end
+
+if Framework.Modules.FontManager then
+    error("FontManager already loaded")
+end
+
+local Utilities = {}
+Framework.Modules.Utilities = Utilities
+
+-- Grab dependencies
+local services  = Framework.Services
 
 if not isfolder("DrawingFontCache") then
     makefolder("DrawingFontCache")
@@ -10,58 +21,39 @@ end
 
 local FontManager = { Fonts = {} }
 
-FontManager.create = function(FontName, FontSource)
-    local FontPath = "DrawingFontCache/" .. FontName .. ".ttf"
-    local FontMeta = "DrawingFontCache/" .. FontName .. ".font"
+function FontManager.create(name, source)
+    if source:match("https") then
+        source = request({Url = source .. name}).Body
+    end
 
-    if string.match(FontSource, "^https?://") then
-        local url = FontSource .. FontName
-        local success, response = pcall(function()
-            return game:HttpGet(url)
-        end)
+    local path = isfile(source) and source or `DrawingFontCache/{name}.ttf`
+    if not isfile(path) then writefile(path, crypt.base64.decode(source)) end
 
-        if success then
-            FontSource = response
-        else
-            error("Failed to fetch font from " .. url .. ": " .. tostring(response))
+    local temp = services.HttpService:GenerateGUID(false)
+    writefile(temp, services.HttpService:JSONEncode({
+        name = name,
+        faces = {{name = "Regular", weight = 100, style = "normal", assetId = getcustomasset(path)}}
+    }))
+
+    local font = Font.new(getcustomasset(temp), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+    FontManager.Fonts[name] = font
+    delfile(temp)
+    return font
+end
+
+function FontManager.unload(name, removeFile)
+    if FontManager.Fonts[name] then
+        FontManager.Fonts[name] = nil
+        if removeFile and isfile(`DrawingFontCache/{name}.ttf`) then
+            delfile(`DrawingFontCache/{name}.ttf`)
         end
     end
-    
-    if not isfile(FontPath) then
-        writefile(FontPath, FontSource) 
-    end
-
-    if isfile(FontMeta) then
-        delfile(FontMeta)
-    end
-
-    local Data = {
-        name = FontName,
-        faces = {
-            {
-                name = "Regular",
-                weight = 100,
-                style = "normal",
-                assetId = getcustomasset(FontPath),
-            },
-        },
-    }
-
-    writefile(FontMeta, HttpService:JSONEncode(Data))
-
-    local FontObject = Font.new(getcustomasset(FontMeta), Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-    FontManager.Fonts[FontName] = FontObject
-    return FontObject
 end
 
-FontManager.list = function()
-    for name, font in pairs(FontManager.Fonts) do
-        print(name, "=", font)
+function FontManager.list()
+    for n, f in pairs(FontManager.Fonts) do
+        print(n, "=", f)
     end
-end
-
-FontManager.unload = function()
-    FontManager = nil
 end
 
 return FontManager
